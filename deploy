@@ -1,0 +1,9 @@
+#!/bin/sh
+npm run build
+rm -r ./deployment/*
+cp -a ./build/. ./deployment/
+cd ./deployment
+git add .
+git commit -m "Deployment"
+git push live master
+cd ../

@@ -10,7 +10,7 @@ class Layout extends Component {
     selectedTag: '',
     tags: [],
     locations: [],
-    amount: 0,
+    amount: '0.00',
     data: []
   };
 
@@ -23,7 +23,7 @@ class Layout extends Component {
       selectedTag: '',
       tags,
       locations: this.filterLocations(tags, data),
-      amount: 0,
+      amount: '0.00',
       data
     });
   }
@@ -35,7 +35,11 @@ class Layout extends Component {
     }, []);
 
     // return the unique locations
-    return locations.filter((value, index, list) => {
+    return Layout.unique(locations);
+  }
+
+  static unique(array) {
+    return array.filter((value, index, list) => {
       return list.indexOf(value) === index;
     });
   }
@@ -50,19 +54,21 @@ class Layout extends Component {
   }
 
   changeAmount = (e) => {
+    const value = e.target.value;
+    const amount = value.split('').filter(v => v.match(/[0-9\.]/g)).join('');
     this.setState({
-      amount: e.target.value
+      amount
     });
   }
 
   savePurchase = () => {
     const { selectedTag, amount, selectedLocation, tags, data } = this.state;
     const date = Date.now();
-    const newTags = [selectedTag, ...tags];
+    const newTags = Layout.unique([selectedTag, ...tags]);
     const newData = {
       ...data,
       [selectedTag]: {
-        ...data[selectedTag] || [],
+        ...(data[selectedTag] || []),
         [selectedLocation]: {
           ...(data[selectedTag] ? data[selectedTag][selectedLocation] || [] : []),
           [date]: amount
@@ -70,14 +76,14 @@ class Layout extends Component {
       }
     };
     save(selectedLocation, selectedTag, amount, date).then(() => {
-      this.setState((state) => ({
+      this.setState({
         selectedLocation: '',
         selectedTag: '',
         locations: this.filterLocations(newTags, newData),
         tags: newTags,
-        amount: 0,
+        amount: '0.00',
         data: newData
-      }));
+      });
     })
   }
 
@@ -98,21 +104,31 @@ class Layout extends Component {
           amount = `${parts[0]}.${parts[1].substring(0, 2)}`;
       }
     } else {
-      amount = `${stringAmount}.00`;
+      if(parts[0]) {
+        amount = `${parts[0]}.00`;
+      } else {
+        amount = '0.00';
+      }
     }
 
     this.setState({ amount });
   }
 
   render() {
-    const disabled = !this.state.amount || !this.state.selectedLocation || !this.state.selectedTag;
+    const disabled =
+      !this.state.amount ||
+      !this.state.selectedLocation ||
+      !this.state.selectedTag ||
+      parseInt(this.state.amount, 10) === 0 ||
+      this.state.amount === '.';
+
     return (
       <div className="Layout">
         <TagSelect value={this.state.selectedTag} values={this.state.tags} change={this.changeTag} />
         <TagSelect value={this.state.selectedLocation} values={this.state.locations} change={this.changeLocation} />
         $<input className="amount-input" type="text" value={this.state.amount} onBlur={this.formatAmount} onChange={this.changeAmount} />
         <div className="save-button">
-          <button onClick={this.savePurchase} disabled={ disabled }>Save Purchase</button>
+          <button onClick={this.savePurchase} disabled={disabled}>Save Purchase</button>
         </div>
       </div>
     );

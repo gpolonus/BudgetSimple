@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import './TagSelect.css';
+import NonBreakingSpaces from './NonBreakingSpaces';
 
 
-export default class extends Component {
+export default class TagSelect extends Component {
   state = {
     filteredValues: []
   }
@@ -10,11 +11,15 @@ export default class extends Component {
   fixedChange = (e) => this.changeTag(e.target.value);
 
   changeTag = (value) => {
-    const filteredValues = this.props.values.filter(((tagSuggestion) => {
-      return tagSuggestion.toLowerCase().indexOf(value.toLowerCase()) > -1;
-    }));
+    const filteredValues = TagSelect.filterValues(value, this.props.values);
     this.setState({ filteredValues });
     this.props.change(value, filteredValues);
+  }
+
+  static filterValues(value, values) {
+    return values.filter(((tag) => {
+      return tag.toLowerCase().indexOf(value.toLowerCase()) > -1;
+    }));
   }
 
   render() {
@@ -25,7 +30,7 @@ export default class extends Component {
       if (this.state.filteredValues.length) {
         filteredValues = this.state.filteredValues;
       } else {
-        filteredValues = this.props.values;
+        filteredValues = TagSelect.filterValues(this.props.value, this.props.values);
       }
     }
     const { value } = this.props;
@@ -38,7 +43,9 @@ export default class extends Component {
             {
               filteredValues.map((tag, i) => (
                 <div key={`tag-${tag}-${i}`} className="tag" onClick={() => this.changeTag(tag)}>
-                  {tag}
+                  <NonBreakingSpaces>
+                    {tag}
+                  </NonBreakingSpaces>
                 </div>
               ))
             }

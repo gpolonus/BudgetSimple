@@ -16,7 +16,7 @@
 }
 
 .TagSelect .tags .tag {
-  display: inline;
+  display: inline-block;
   padding: 5px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   margin: 3px;
