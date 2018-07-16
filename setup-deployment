@@ -1,0 +1,6 @@
+#!/bin/sh
+mkdir deployment
+cd deployment
+git init
+git remote add live ssh://self@grif.work/var/repo/site.git
+git pull live master
