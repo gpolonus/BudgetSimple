@@ -7,7 +7,11 @@
  * when youre back online later
  */
 
-// let payloadCallback = () => {};
-
-// export const
-
+export default (funcs) => {
+  if (navigator.onLine) {
+    funcs.off();
+    return funcs.on();
+  } else {
+    return funcs.off();
+  }
+}
