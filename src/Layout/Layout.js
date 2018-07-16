@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Layout.css';
-import { save } from '../services/DataService';
+import { saveData } from '../services/DataService';
 import TagSelect from './TagSelect/TagSelect';
 
 class Layout extends Component {
@@ -10,7 +10,7 @@ class Layout extends Component {
     selectedTag: '',
     tags: [],
     locations: [],
-    amount: '0.00',
+    amount: '',
     data: []
   };
 
@@ -23,7 +23,7 @@ class Layout extends Component {
       selectedTag: '',
       tags,
       locations: this.filterLocations(tags, data),
-      amount: '0.00',
+      amount: '',
       data
     });
   }
@@ -75,13 +75,13 @@ class Layout extends Component {
         }
       }
     };
-    save(selectedLocation, selectedTag, amount, date).then(() => {
+    saveData(selectedLocation, selectedTag, amount, date).then(() => {
       this.setState({
         selectedLocation: '',
         selectedTag: '',
         locations: this.filterLocations(newTags, newData),
         tags: newTags,
-        amount: '0.00',
+        amount: '',
         data: newData
       });
     })
@@ -107,7 +107,7 @@ class Layout extends Component {
       if(parts[0]) {
         amount = `${parts[0]}.00`;
       } else {
-        amount = '0.00';
+        amount = '';
       }
     }
 

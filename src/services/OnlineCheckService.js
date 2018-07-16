@@ -9,9 +9,9 @@
 
 export default (funcs) => {
   if (navigator.onLine) {
-    funcs.off();
+    // funcs.off();
     return funcs.on();
   } else {
-    return funcs.off();
+    // return funcs.off();
   }
 }
