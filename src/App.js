@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import Layout from './Layout/Layout';
-import { fetchData } from './services/DataService';
+import { fetchAndSaveNewestData } from './services/DataService';
+
 
 class App extends Component {
 
@@ -10,9 +11,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetchData().then((data) => {
-      this.setState({ data });
-    })
+    fetchAndSaveNewestData().then((data) =>
+        this.setState({ data })
+    )
   }
 
   render() {

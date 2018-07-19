@@ -1,36 +1,73 @@
-import onlineCheck from './OnlineCheckService';
+import onlineCheckRun from './OnlineCheckService';
 import fb from './FirebaseService';
 import ls from './LocalStorageService';
 
 // use auth service here
-const username = 'gpolonus';
+const username = process.env.REACT_APP_USERNAME;
 
-export const saveData = (...args) => {
-  return onlineCheck({
-    on: () => saveFB(...args),
-    off: () => saveLS(...args),
+export const constructData = (data, location, tag, amount, date) => {
+  return {
+    ...data,
+    '_updated': date,
+    [tag]: {
+      ...(data[tag] || []),
+      [location]: {
+        ...(data[tag] ? data[tag][location] || [] : []),
+        [date]: amount
+      }
+    }
+  };
+}
+
+export const saveData = (data, ...args) => {
+  let newData = data;
+  if(args) {
+    newData = constructData(data, ...args);
+  }
+  return onlineCheckRun({
+    on: () => {
+      saveLS(newData)
+      return saveFB(newData);
+    },
+    off: () => saveLS(newData),
   });
 }
 
-export const fetchData = () => {
-  return onlineCheck({
-    on: () => fetchFB(),
+export const fetchAndSaveNewestData = () => {
+  return onlineCheckRun({
+    on: () => {
+      return new Promise(resolve => {
+        fetchFB().then(onData =>
+          fetchLS().then(offData => {
+            resolve(saveNewest(onData, offData));
+          })
+        );
+      });
+    },
     off: () => fetchLS(),
   });
 }
 
-const saveFB = (location, tag, amount, date) => {
-  return new Promise((resolve) => {
-    fb.set(`${username}/${tag}/${location}/${date}`, amount).then(resolve);
-  });
+export const saveNewest = (onData, offData = ls.get()) => {
+  const newestOnDate = onData._updated;
+  const newestOffDate = offData._updated;
+  if(newestOnDate < newestOffDate) {
+    return saveFB(offData);
+  } else if (newestOnDate > newestOffDate) {
+    return saveLS(onData);
+  } else {
+    return Promise.resolve(onData);
+  }
 }
 
-const saveLS = (location, tag, amount, date) => {
+const saveFB = (data) => {
+  return fb.set(username, data);
+}
+
+const saveLS = (data) => {
   return new Promise(resolve => {
-    const data = ls.get();
-    data[tag][location][date] = amount;
     ls.set(data);
-    resolve();
+    resolve(data)
   });
 }
 

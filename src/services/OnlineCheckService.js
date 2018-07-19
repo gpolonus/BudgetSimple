@@ -8,10 +8,11 @@
  */
 
 export default (funcs) => {
-  if (navigator.onLine) {
-    // funcs.off();
+  if (isOnline()) {
     return funcs.on();
   } else {
-    // return funcs.off();
+    return funcs.off();
   }
 }
+
+export const isOnline = () => navigator.onLine;

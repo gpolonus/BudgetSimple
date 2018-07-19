@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Layout.css';
-import { saveData } from '../services/DataService';
+import { saveData, constructData } from '../services/DataService';
 import TagSelect from './TagSelect/TagSelect';
 
 class Layout extends Component {
@@ -11,12 +11,12 @@ class Layout extends Component {
     tags: [],
     locations: [],
     amount: '',
-    data: []
+    data: {}
   };
 
   componentDidMount() {
     const data = this.props.data;
-    const tags = Object.keys(data);
+    const tags = Object.keys(data).filter(tag => tag[0] !== '_');
 
     this.setState({
       selectedLocation: '',
@@ -55,7 +55,7 @@ class Layout extends Component {
 
   changeAmount = (e) => {
     const value = e.target.value;
-    const amount = value.split('').filter(v => v.match(/[0-9\.]/g)).join('');
+    const amount = value.split('').filter(v => v.match(/[0-9.]/g)).join('');
     this.setState({
       amount
     });
@@ -65,17 +65,8 @@ class Layout extends Component {
     const { selectedTag, amount, selectedLocation, tags, data } = this.state;
     const date = Date.now();
     const newTags = Layout.unique([selectedTag, ...tags]);
-    const newData = {
-      ...data,
-      [selectedTag]: {
-        ...(data[selectedTag] || []),
-        [selectedLocation]: {
-          ...(data[selectedTag] ? data[selectedTag][selectedLocation] || [] : []),
-          [date]: amount
-        }
-      }
-    };
-    saveData(selectedLocation, selectedTag, amount, date).then(() => {
+    const newData = constructData(data, selectedLocation, selectedTag, amount, date);
+    saveData(newData, selectedLocation, selectedTag, amount, date).then(() => {
       this.setState({
         selectedLocation: '',
         selectedTag: '',

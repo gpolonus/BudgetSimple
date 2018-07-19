@@ -11,7 +11,7 @@ export default {
   database: firebase.database(),
   set(ref, data) {
     return new Promise(resolve => {
-      this.database.ref(ref).set(data, (_data) => resolve(_data));
+      this.database.ref(ref).set(data, () => resolve(data));
     });
   },
   ref(ref) {
