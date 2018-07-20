@@ -49,8 +49,14 @@ export const fetchAndSaveNewestData = () => {
 }
 
 export const saveNewest = (onData, offData = ls.get()) => {
-  const newestOnDate = onData._updated;
-  const newestOffDate = offData._updated;
+  if(!offData && onData) {
+    return saveLS(onData);
+  } else if (!onData && offData) {
+    return saveFB(offData);
+  }
+
+  const newestOnDate = onData._updated || 0;
+  const newestOffDate = offData._updated || 0;
   if(newestOnDate < newestOffDate) {
     return saveFB(offData);
   } else if (newestOnDate > newestOffDate) {
