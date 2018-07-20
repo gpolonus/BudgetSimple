@@ -2,8 +2,6 @@ import onlineCheckRun from './OnlineCheckService';
 import fb from './FirebaseService';
 import ls from './LocalStorageService';
 
-// use auth service here
-const username = process.env.REACT_APP_USERNAME;
 
 export const constructData = (data, location, tag, amount, date) => {
   return {
@@ -53,21 +51,23 @@ export const saveNewest = (onData, offData = ls.get()) => {
     return saveLS(onData);
   } else if (!onData && offData) {
     return saveFB(offData);
-  }
-
-  const newestOnDate = onData._updated || 0;
-  const newestOffDate = offData._updated || 0;
-  if(newestOnDate < newestOffDate) {
-    return saveFB(offData);
-  } else if (newestOnDate > newestOffDate) {
-    return saveLS(onData);
+  } else if(!onData && !offData) {
+    return {};
   } else {
-    return Promise.resolve(onData);
+    const newestOnDate = onData._updated || 0;
+    const newestOffDate = offData._updated || 0;
+    if(newestOnDate < newestOffDate) {
+      return saveFB(offData);
+    } else if (newestOnDate > newestOffDate) {
+      return saveLS(onData);
+    } else {
+      return Promise.resolve(onData);
+    }
   }
 }
 
 const saveFB = (data) => {
-  return fb.set(username, data);
+  return fb.set(data);
 }
 
 const saveLS = (data) => {
@@ -79,7 +79,7 @@ const saveLS = (data) => {
 
 const fetchFB = () => {
   return new Promise(resolve => {
-    fb.ref(username).once('value', (data) => {
+    fb.getUserDataRef().once('value', (data) => {
       resolve(data.toJSON());
     });
   });
