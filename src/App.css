@@ -3,3 +3,10 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@media screen and (min-width: 500px) {
+  .App {
+    width: 500px;
+    text-align: center;
+    margin: auto;
+  }
+}
