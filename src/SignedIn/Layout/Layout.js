@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Layout.css';
-import { saveData, constructData } from '../services/DataService';
+import { saveData, constructData } from '../../services/DataService';
 import TagSelect from './TagSelect/TagSelect';
 
 class Layout extends Component {
@@ -115,9 +115,14 @@ class Layout extends Component {
 
     return (
       <div className="Layout">
+        <h3>Tag</h3>
         <TagSelect value={this.state.selectedTag} values={this.state.tags} change={this.changeTag} />
+        <h3>Location</h3>
         <TagSelect value={this.state.selectedLocation} values={this.state.locations} change={this.changeLocation} />
-        $<input className="amount-input" type="text" value={this.state.amount} onBlur={this.formatAmount} onChange={this.changeAmount} />
+        <div class="Amount">
+          <h3>Amount</h3>
+          $<input className="amount-input" type="text" value={this.state.amount} onBlur={this.formatAmount} onChange={this.changeAmount} />
+        </div>
         <div className="save-button">
           <button onClick={this.savePurchase} disabled={disabled}>Save Purchase</button>
         </div>

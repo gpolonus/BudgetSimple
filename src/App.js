@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import fb from './services/FirebaseService';
 import SignedIn from './SignedIn/SignedIn';
+import Loading from './components/Loading/Loading';
 import './App.css';
 
 const Aux = ({children}) => children;
@@ -60,7 +61,7 @@ class SignInScreen extends Component {
     let markup;
     switch(this.state.signedIn) {
       case 0:
-        markup = null;
+        markup = <Loading />;
         break;
       case 1:
         markup = (

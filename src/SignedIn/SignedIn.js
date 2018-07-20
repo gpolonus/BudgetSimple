@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { fetchAndSaveNewestData } from '../services/DataService';
-import Layout from '../Layout/Layout';
+import Layout from './Layout/Layout';
 import fb from '../services/FirebaseService';
+import Loading from '../components/Loading/Loading';
 
 
 export default class extends Component{
@@ -21,7 +22,7 @@ export default class extends Component{
     return (
       this.state.data ?
         <Layout data={this.state.data} /> :
-        <div>Loading</div>
+        <Loading />
     );
   }
 }
