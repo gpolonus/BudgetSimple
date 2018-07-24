@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './TagSelect.css';
-import NonBreakingSpaces from './NonBreakingSpaces';
+import Tag from '../../../components/Tag/Tag';
 
 
 export default class TagSelect extends Component {
@@ -42,11 +42,7 @@ export default class TagSelect extends Component {
           <div className="tags">
             {
               filteredValues.map((tag, i) => (
-                <div key={`tag-${tag}-${i}`} className="tag" onClick={() => this.changeTag(tag)}>
-                  <NonBreakingSpaces>
-                    {tag}
-                  </NonBreakingSpaces>
-                </div>
+                <Tag key={`tag-${tag}-${i}`} tag={tag} click={this.changeTag} />
               ))
             }
           </div>

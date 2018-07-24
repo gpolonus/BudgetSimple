@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { fetchAndSaveNewestData } from '../services/DataService';
+import { setUid, fetchAndSaveNewestData } from '../services/DataService';
 import Layout from './Layout/Layout';
-import fb from '../services/FirebaseService';
 import Loading from '../components/Loading/Loading';
 
 
@@ -12,7 +11,7 @@ export default class extends Component{
   }
 
   componentDidMount() {
-    fb.uid = this.props.user.uid;
+    setUid(this.props.user.uid);
     fetchAndSaveNewestData().then((data) =>
         this.setState({ data })
     );

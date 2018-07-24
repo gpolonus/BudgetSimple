@@ -1,8 +1,8 @@
 
-const username = process.env.REACT_APP_USERNAME;
-const dataId = `budget-simple-data-${username}`;
+let dataId = 'budget-simple-data-';
 
 export default {
+  setUid: uid => dataId += uid,
   get: () => JSON.parse(localStorage.getItem(dataId)),
   set: (value) => localStorage.setItem(dataId, JSON.stringify(value))
 }

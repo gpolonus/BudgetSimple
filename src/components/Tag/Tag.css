@@ -1,0 +1,18 @@
+
+.Tag {
+  display: inline-block;
+  padding: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  margin: 3px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.Tag.highlighted {
+  font-weight: bold;
+}
+
+.Tag:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './Layout.css';
 import { saveData, constructData } from '../../services/DataService';
 import TagSelect from './TagSelect/TagSelect';
+import BooleanChoiceSelect from './BooleanChoiceSelect/BooleanChoiceSelect';
 
 class Layout extends Component {
 
@@ -11,7 +12,8 @@ class Layout extends Component {
     tags: [],
     locations: [],
     amount: '',
-    data: {}
+    data: {},
+    logType: 'Purchase'
   };
 
   componentDidMount() {
@@ -65,15 +67,17 @@ class Layout extends Component {
     const { selectedTag, amount, selectedLocation, tags, data } = this.state;
     const date = Date.now();
     const newTags = Layout.unique([selectedTag, ...tags]);
-    const newData = constructData(data, selectedLocation, selectedTag, amount, date);
-    saveData(newData, selectedLocation, selectedTag, amount, date).then(() => {
+    const newAmount = this.state.logType === 'Purchase' ? '-' + amount : amount;
+    const newData = constructData(data, selectedLocation, selectedTag, newAmount, date);
+    saveData(newData, selectedLocation, selectedTag, newAmount, date).then(() => {
       this.setState({
         selectedLocation: '',
         selectedTag: '',
         locations: this.filterLocations(newTags, newData),
         tags: newTags,
         amount: '',
-        data: newData
+        data: newData,
+        logType: 'Purchase'
       });
     })
   }
@@ -105,6 +109,10 @@ class Layout extends Component {
     this.setState({ amount });
   }
 
+  changeLogType = (logType) => {
+    this.setState({ logType });
+  }
+
   render() {
     const disabled =
       !this.state.amount ||
@@ -119,9 +127,12 @@ class Layout extends Component {
         <TagSelect value={this.state.selectedTag} values={this.state.tags} change={this.changeTag} />
         <h3>Location</h3>
         <TagSelect value={this.state.selectedLocation} values={this.state.locations} change={this.changeLocation} />
-        <div class="Amount">
+        <h3>Type</h3>
+        <BooleanChoiceSelect value={this.state.logType} first="Purchase" second="Gain" change={this.changeLogType} />
+        <div className="Amount">
           <h3>Amount</h3>
-          $<input className="amount-input" type="text" value={this.state.amount} onBlur={this.formatAmount} onChange={this.changeAmount} />
+          { this.state.logType === 'Purchase' ? '-' : '+' }&nbsp;
+          <input className="amount-input" type="text" value={this.state.amount} onBlur={this.formatAmount} onChange={this.changeAmount} />
         </div>
         <div className="save-button">
           <button onClick={this.savePurchase} disabled={disabled}>Save Purchase</button>

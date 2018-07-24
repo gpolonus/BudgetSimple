@@ -3,6 +3,12 @@ import fb from './FirebaseService';
 import ls from './LocalStorageService';
 
 
+export const setUid = (uid) => {
+  fb.setUid(uid);
+  ls.setUid(uid);
+}
+
+
 export const constructData = (data, location, tag, amount, date) => {
   return {
     ...data,
@@ -11,7 +17,7 @@ export const constructData = (data, location, tag, amount, date) => {
       ...(data[tag] || []),
       [location]: {
         ...(data[tag] ? data[tag][location] || [] : []),
-        [date]: amount
+        [date]: parseInt(amount, 10)
       }
     }
   };
